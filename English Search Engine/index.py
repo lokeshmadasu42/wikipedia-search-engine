@@ -31,7 +31,7 @@ def merge_id_files(num_of_files):
     del id_to_title_dic
 
 
-## This creates charcter and number wise individual files. Ex. token_a.txt file will contain all the tokens
+## This creates character and number wise individual files. Ex. token_a.txt file will contain all the tokens
 ## started with 'a' and their corresponding posting lists.
 def create_char_wise_files(num_of_files):
     global char_list
@@ -333,9 +333,18 @@ def get_field_wise_data(title,text_data):
     return final_title_text, final_body_text,final_cat_text, final_info_text, final_links_text, final_ref_text
 
 class XMLParser(xml.sax.ContentHandler):
+    
+    """
+        A custom class XMLParser is defined that inherits from xml.sax.ContentHandler. This class is used for handling XML events.
+    """
 
     def __init__(self):
 
+        """
+            The constructor initializes several instance variables, including self.tag, self.doc_id, self.title, self.text, self.namespa, self.page_count, and self.start_time.
+            These variables will be used to store information extracted from the XML content.
+        """
+        
         self.tag = ''
         self.doc_id = ''
         self.title = ''
@@ -345,10 +354,22 @@ class XMLParser(xml.sax.ContentHandler):
         self.start_time = time.time()
 
     def startElement(self,name,attrs):
+        """
+            This method is called when the parser encounters the start of an XML element. It sets the self.tag to the name of the current element.
+            when the parser encounters the opening tag of an element (e.g., <id>), it records the name of the tag in self.tag.
+            This is how the parser keeps track of which element it is currently processing.
+            
+        """
 
         self.tag=name
         
     def endElement(self,name):
+        """
+            This method is called when the parser encounters the end of an XML element. It handles the processing of specific elements within a <page> element.
+            For example, when the parser encounters the closing tag of an element (e.g., </id>), it invokes the endElement method.  
+            
+        """
+        
         global id2title_dict
         global word_posting_dict
         global index_files_count
@@ -398,6 +419,11 @@ class XMLParser(xml.sax.ContentHandler):
             self.namespa = ""
 
     def characters(self, content):
+        
+        """
+             When the parser encounters the character data within an element (e.g., the content of <id>), it checks the value of self.tag to determine which element is currently being processed.
+             For example, if it's <id>, it appends the character data to self.doc_id.
+        """
         
         if self.tag == 'id':
             self.doc_id += content

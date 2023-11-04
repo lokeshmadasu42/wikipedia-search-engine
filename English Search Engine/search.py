@@ -67,7 +67,7 @@ def get_id_title(doc_id):
 
 def binary_search_title(file_id,doc_id):
     doc_id = int(doc_id)
-    file_pointer = open('./char_wise_files/id_title_' + str(file_id) + ".txt", 'r')
+    file_pointer = open('./char_wise_files/id_title_' + str(file_id) + ".txt", 'r', encoding='utf-8')
     start_line = 0
     end_line = len(file_pointer.readlines())
     posting_list = []
@@ -99,10 +99,16 @@ def binary_search_title(file_id,doc_id):
 
 
 def get_char_file_for_posting(token):
+    """
+        The purpose of this function is to efficiently locate a specific line within a file by performing a binary search based on the token. 
+    
+    """
+    
     file_pointer = open('./char_wise_files/token_'+ token[0] +'_info.txt', 'r')
     start_line = 0
     end_line = len(file_pointer.readlines())
     while(True):
+        # resets the file pointer to the beginning of the file.
         file_pointer.seek(0)
         offset_value = int((end_line - start_line)/2)
         mid_line = start_line + offset_value
@@ -324,9 +330,16 @@ if __name__=='__main__':
         start_time = time.time()
         print("Input_query : ",query)
         print("\n")
+        
+        # query_type will be field or plain.
         query_type = get_type_of_query(query)
+        
+        # if query = t:virat kohli
+        # findings = defaultdict(<class 'dict'>, {'virat': {'t': {'16017429': 1, '21987751': 1, '35009332': 1, 32': 1, '555143': 1, '949199': 1}}, 'koh': {'t': {'16966': 1, '235565': 1, '286311': 1 ....}}})
         findings = process_query(query,query_type,field_query_pattern)
+        # postings_with_ranking_scores = defaultdict(<class 'dict'>, {'virat': {'t': {'16017429': 14.14870301722907, '21987751': 14.14870301722907, '35009332': 14.14870301722907, '41780702': 14.14870301722907}}, 'koh': {'t': {'16966': 10.23664489620372, '235565': 10.23664489620372, '286311': 10.23664489620372}}})
         postings_with_ranking_scores =  apply_tf_idf_ranking(findings,N)
+        # final_postings = {'t': {'49373197': 24.38534791343279, '41780702': 24.38534791343279, '16017429': 24.38534791343279}}
         final_postings = get_final_postings(postings_with_ranking_scores,query_type)
         if query_type!="field":
             top_docs = get_common_docs(final_postings)

@@ -1,52 +1,43 @@
-English wikipedia search engine :
+# English Wikipedia Search Engine
 
-It actually involves two important stages in building the end to end information retrieval system, also called as "wikipedia search engine" on english wikipedia
-dump of size nearly 100GB. First stage is to create the index file in a very efficient manner, which will essentially help us in retrieving the documents list/articles
-list for the given input query. Second stage is the search operation, which has very low latency(delay in retrieval) requirement. In simpler terms, each token in
-the input query needs be search in the index file that was created earlier.
+## Overview
 
-For phase-1:
+This project presents an end-to-end information retrieval system developed using the English Wikipedia dump, a dataset of approximately 100GB in size encompassing nearly 22 million wiki pages. The system's core functionality supports two types of queries: Plain queries and Field queries. The primary goal is to provide the top 10 relevant Wikipedia article titles for a given query. The project unfolds in two key stages: Index Creation and Search Operation.
 
-I have completed the index creation part and basic search query implementation (which supports both plain query and field query). And also , for creating the
-index file on 1.6GB dump took around 300 to 400 secs. In this phase I have created only one index file, no other intermediate files.
+### Plain query examples:
 
-For phase-2:
+- Lionel Messi
+- Barcelona
 
-In this phase , we are given a wikipedia dump of size nearly 100GB. I have used the same indexing code which I used in the first phase to create the index files
-for this large dump as well. This time I have created multiple intermediate files to balance the compute load and for other search benefits.
-The code has taken around 10 hours to create the index files. 
+### Support for field queries:
 
-Intially, I have created 45 intermediate files and id_title files and from those files I created character wise files. Ex. all the tokens which starts with 'a' will be moved to
-the token_a.txt, like this I have done it for all the alphabets and digits.
+Fields include Title, Infobox, Body, Category, Links, and References of a Wikipedia page.
 
-Index_size is  = "15.1 GB"
+### Field query examples:
 
-So the total files would be from 45 to 26(a-z) , 0-9(digits).
+- t:World Cup i:2018 c:Football – search for "World Cup" in Title, "2018" in Infobox, and "Football" in Category
 
-ID to title secondary index files = 101
-ID to secondary index file map    = 1
-Index files starts with digit     = 10
-A-Z secondary index file map      = 26
-----------------------------------------
-Total files                       = 128
+## Stage 1: Index Creation
 
-Finally, I have created secondary index files for each_alphabets. Total files are 2764.
+The initial stage of the project focuses on efficiently creating the index file, which is pivotal for retrieving a list of article titles relevant to a given query. This stage involves the following steps:
 
-Folder hierarchy,
+1. **Parsing:** The XML dump is parsed using an xml.sax parser to extract field-wise information.
+2. **Preprocessing:** Text is standardized by converting it to lowercase, replacing non-ASCII characters with spaces, tokenizing the text, removing stop words, and applying stemming to obtain word roots.
+3. **Inverted Index Creation:** An inverted index is created, listing words and their corresponding posting lists. This data is stored in multiple index files.
 
-1) char_wise_files folder contains all the secondary index files.(2674)
-2) Index.py code file
-3) Search.py code file
-4) Stats.tx file which contains the stats.
-5) Readme.txt
+Example of the index file format:
+
+sachin:d1-t1c2b7|d5-t1
+tendulkar:d1-t1b1|d6-c1b1
 
 
-
-
-##############################
-
-1 - Time taken to create inverted index : 10.35 hours
-2 - Number of inverted index files : 2764
-3 - Number of tokens in inverted index : 14603681
-4 - Inverted index size : 15.1 GB
-
+- **Index Size Constraint:** The index size is limited to a maximum of one-fourth of the original dump size (100GB), making the index size less than 25GB. The created index size is 15.1GB.
+- To optimize computational load and search efficiency, multiple intermediate files were generated. Index creation for this large dump took approximately 10 hours.
+- Initially, 46 inverted index files and 46 id_to_title files were created, containing word-posting lists and article IDs with their titles.
+- The 46 id_to_title files were combined into a single id_to_title file, sorted by article ID.
+- Character-wise files were generated from the 46 inverted index files, resulting in 26 files for the letters A to Z and 10 files for digits 0-9.
+- Final character-wise files were created, each containing unique words and their posting lists. This process was also applied to digit-wise files.
+- To manage computational load and search efficiency, each character-wise file was split into 101 smaller files. For example, `token_a.txt` was split into `token_a_1.txt`, `token_a_2.txt`, and so on. This resulted in a total of 2626 character-wise files, 10 digit-wise files, and a single id_to_title file.
+- Character-wise info files were generated for the 26 character-wise files, containing the first words of the corresponding 101 character-wise files.
+- The single id_to_title file was split into 101 id_to_title files. Additionally, an `id_title_info.txt` file was created, listing the last words of all 101 id_to_title files.
+- In total, there are 2764 index files, including 2626 character-wise files, 26 character-wise info files, 10 digit-wise files, and one `id_to_title_info` file.
