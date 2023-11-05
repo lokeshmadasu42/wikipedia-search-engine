@@ -46,55 +46,50 @@ tendulkar:d1-t1b1|d6-c1b1
 - The single id_to_title file was split into 101 id_to_title files. Additionally, an `id_title_info.txt` file was created, listing the last words of all 101 id_to_title files.
 - In total, there are 2764 index files, including 2626 character-wise files, 26 character-wise info files, 10 digit-wise files, and one `id_to_title_info` file.
 
-## Stage 2: Search Opertaion
+## Stage 2: Search Operation
 
-The system is expected to output relevant Wikipedia page titles in response to plain or field queries in less than 10 seconds. Here is the flowchart of the search operation following a detailed description of each module.
+The system is expected to output relevant Wikipedia page titles in response to plain or field queries in less than 10 seconds. Below is the flowchart of the search operation, along with a detailed description of each module.
 
-![Search operation](Search_pipeline.png)
+![Search Operation](Search_pipeline.png)
 
-### Modules description
+### Modules Description
 
-1. **Identify type of query**: This function is reponsible for identifying whether the query is plain query or field query.
-2. **Process query** : This function executes series of other functions such as preprocess, get_char_file_for_posting, binary_search_posting, parse_posting and returns a dictionary with the following structure:
+1. **Identify Type of Query**: This function is responsible for identifying whether the query is a plain query or a field query.
 
-    For example, following is the output for the query `t:virat kohli`
+2. **Process Query**: This function executes a series of other functions, including preprocessing, get_char_file_for_posting, binary_search_posting, and parse_posting. It returns a dictionary with the following structure. For example, here is the output for the query `t:virat kohli`:
+
+    ```python
+    defaultdict(<class 'dict'>, {'virat': {'t': {'16017429': 1, '21987751': 1, '35009332': 1, '32': 1, '555143': 1, '949199': 1}}, 'koh': {'t': {'16966': 1, '235565': 1, '286311': 1, ...}})
     ```
-    defaultdict(<class 'dict'>, {'virat': {'t': {'16017429': 1, '21987751': 1, '35009332': 1, 32': 1, '555143': 1, '949199': 1}}, 'koh': {'t': {'16966': 1, '235565': 1, '286311': 1 ....}}})
 
-    ```
     - The keys of the dictionary are the individual words present in the query.
-    - For each word, there is a sub-dictionary containing field-specific information. In this case, - the 't' field represents the "title" field.
-    - Within the 't' field sub-dictionary, document IDs are used as keys, and the values associated - with these document IDs are the frequencies of the word occurrences in the "title" field of the respective documents.
+    - For each word, there is a sub-dictionary containing field-specific information. In this case, the 't' field represents the "title" field.
+    - Within the 't' field sub-dictionary, document IDs are used as keys, and the values associated with these document IDs are the frequencies of the word occurrences in the "title" field of the respective documents.
 
-3. **Get char file posting** : The purpose of this function is to efficiently locate a specific line within a file by performing a binary search based on the token. This is how it works:
-- It takes token as input and returns the one of the inverted index file id in 2764 files as the output. This output file will contain the given token and its posting list.
+3. **Get Char File Posting**: The purpose of this function is to efficiently locate a specific line within a file by performing a binary search based on the token. It takes a token as input and returns one of the inverted index file IDs from the 2764 files, which will contain the given token and its posting list.
 
-4. **Binary search posting** : This function performs binary search in the above returned file and returns the posting list for given token/word.
+4. **Binary Search Posting**: This function performs binary search in the above returned file and returns the posting list for the given token/word.
 
-5. **Parse posting** : This function reformat the posting list into desired format.
+5. **Parse Posting**: This function reformats the posting list into the desired format.
 
-6. **Apply TF-IDF Ranking** : This function applies TF-IDF ranking and assigns relevance score to each of the document. The intution behind TF-IDF is , terms that appear often in a document should have high weights, and terms that appear in many documents should have low weights.
-
-    Score calculation :
+6. **Apply TF-IDF Ranking**: This function applies TF-IDF ranking and assigns a relevance score to each document. The intuition behind TF-IDF is that terms that appear often in a document should have high weights, and terms that appear in many documents should have low weights.
 
     ![TF-IDF Formula](tf-idf-formula.png)
 
     ```
-    weightage_dict = {'t':1.0, 'b':0.6, 'c':0.4, 'i':0.75, 'l':0.20, 'r':0.25}
+    weightage_dict = {'t': 1.0, 'b': 0.6, 'c': 0.4, 'i': 0.75, 'l': 0.20, 'r': 0.25}
 
-    score =  weightage_dict * W_{t,d}
+    score = weightage_dict * W_{t,d}
     ```
 
-    Finally, this funtion returns the dictionary like below. '49373197' is the document-id and 24.38 is the relevance score.
+    Finally, this function returns a dictionary like the one below. '49373197' is the document ID, and 24.38 is the relevance score.
 
+    ```python
+    {'virat': {'t': {'49373197': 24.38534791343279, '41780702': 24.38534791343279, '16017429': 24.38534791343279}}
     ```
 
-    {'virat' : {'t': {'49373197': 24.38534791343279, '41780702': 24.38534791343279, '16017429': 24.38534791343279}}}
+7. **Get Top 10 Docs**: This function returns the top 10 document IDs sorted based on the relevance scores.
 
-    ```
+8. **Get ID Title and Binary Search Title**: The first function, `get_id_title`, is responsible for locating the correct `id_to_title` index file. In the second function, binary search is applied to get the wiki title for a given document ID in the previously returned `id_to_title` index file.
 
-7. **Get top 10 docs** : This function returns the top 10 doc-id's sorted based on the relevance scores.
-
-8. **get id title and binary search title** : The first function get id title is responsible for locating the correct id_to_title index file. In the second funtion, binary search will be applied to get the wiki title for given document-id in the previously returned id_to_title index file.
-
-Finally, top 10 wikipedia articles titles are displayed. For more details, you can explore the code files: Index.py and Search.py.
+Finally, the top 10 Wikipedia article titles are displayed. For more details, you can explore the code files: `Index.py` and `Search.py`.
