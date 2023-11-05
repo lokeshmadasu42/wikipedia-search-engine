@@ -1,6 +1,6 @@
 # English Wikipedia Search Engine
 
-[![Video](Search_pipeline.png)](search_engine_streamlit.mkv)
+[![Video](virat_kohli_plain_query_results.png)](search_engine_streamlit.mkv)
 
 ## Overview
 
