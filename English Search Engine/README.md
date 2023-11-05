@@ -35,7 +35,7 @@ tendulkar:d1-t1b1|d6-c1b1
 
 ```
 
-- **Index Size Constraint:** The index size is limited to a maximum of one-fourth of the original dump size (100GB), making the index size less than 25GB. The created index size is 15.1GB.
+- **Index Size Constraint:** The index size is limited to a maximum of one-fourth of the original dump size (100GB), making the index size less than 25GB. The created index size is 15.1GB and it has nearly 14 Million words in it.
 - To optimize computational load and search efficiency, multiple intermediate files were generated. Index creation for this large dump took approximately 10 hours.
 - Initially, 46 inverted index files and 46 id_to_title files were created, containing word-posting lists and article IDs with their titles.
 - The 46 id_to_title files were combined into a single id_to_title file, sorted by article ID.
@@ -45,3 +45,9 @@ tendulkar:d1-t1b1|d6-c1b1
 - Character-wise info files were generated for the 26 character-wise files, containing the first words of the corresponding 101 character-wise files.
 - The single id_to_title file was split into 101 id_to_title files. Additionally, an `id_title_info.txt` file was created, listing the last words of all 101 id_to_title files.
 - In total, there are 2764 index files, including 2626 character-wise files, 26 character-wise info files, 10 digit-wise files, and one `id_to_title_info` file.
+
+## Stage 2: Search Opertaion
+
+The system is expected to output relevant Wikipedia page titles in response to plain or field queries in less than 10 seconds. Here is the flowchart of the search operation following a detailed description of each module.
+
+![Search operation](Search_pipeline.png)
