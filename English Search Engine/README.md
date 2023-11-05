@@ -57,14 +57,14 @@ The system is expected to output relevant Wikipedia page titles in response to p
 1. **Identify type of query**: This function is reponsible for identifying whether the query is plain query or field query.
 2. **Process query** : This function executes series of other functions such as preprocess, get_char_file_for_posting, binary_search_posting, parse_posting and returns a dictionary with the following structure:
 
-For example, following is the output for the query `t:virat kohli`
-```
-defaultdict(<class 'dict'>, {'virat': {'t': {'16017429': 1, '21987751': 1, '35009332': 1, 32': 1, '555143': 1, '949199': 1}}, 'koh': {'t': {'16966': 1, '235565': 1, '286311': 1 ....}}})
+    For example, following is the output for the query `t:virat kohli`
+    ```
+    defaultdict(<class 'dict'>, {'virat': {'t': {'16017429': 1, '21987751': 1, '35009332': 1, 32': 1, '555143': 1, '949199': 1}}, 'koh': {'t': {'16966': 1, '235565': 1, '286311': 1 ....}}})
 
-```
-- The keys of the dictionary are the individual words present in the query.
-- For each word, there is a sub-dictionary containing field-specific information. In this case, - the 't' field represents the "title" field.
-- Within the 't' field sub-dictionary, document IDs are used as keys, and the values associated - with these document IDs are the frequencies of the word occurrences in the "title" field of the respective documents.
+    ```
+    - The keys of the dictionary are the individual words present in the query.
+    - For each word, there is a sub-dictionary containing field-specific information. In this case, - the 't' field represents the "title" field.
+    - Within the 't' field sub-dictionary, document IDs are used as keys, and the values associated - with these document IDs are the frequencies of the word occurrences in the "title" field of the respective documents.
 
 3. **Get char file posting** : The purpose of this function is to efficiently locate a specific line within a file by performing a binary search based on the token. This is how it works:
 - It takes token as input and returns the one of the inverted index file id in 2764 files as the output. This output file will contain the given token and its posting list.
@@ -75,23 +75,23 @@ defaultdict(<class 'dict'>, {'virat': {'t': {'16017429': 1, '21987751': 1, '3500
 
 6. **Apply TF-IDF Ranking** : This function applies TF-IDF ranking and assigns relevance score to each of the document. The intution behind TF-IDF is , terms that appear often in a document should have high weights, and terms that appear in many documents should have low weights.
 
-Score calculation :
+    Score calculation :
 
-![TF-IDF Formula](tf-idf-formula.png)
+    ![TF-IDF Formula](tf-idf-formula.png)
 
-```
-weightage_dict = {'t':1.0, 'b':0.6, 'c':0.4, 'i':0.75, 'l':0.20, 'r':0.25}
+    ```
+    weightage_dict = {'t':1.0, 'b':0.6, 'c':0.4, 'i':0.75, 'l':0.20, 'r':0.25}
 
-score =  weightage_dict * W_{t,d}
-```
+    score =  weightage_dict * W_{t,d}
+    ```
 
-Finally, this funtion returns the dictionary like below. '49373197' is the document-id and 24.38 is the relevance score.
+    Finally, this funtion returns the dictionary like below. '49373197' is the document-id and 24.38 is the relevance score.
 
-```
+    ```
 
-{'virat' : {'t': {'49373197': 24.38534791343279, '41780702': 24.38534791343279, '16017429': 24.38534791343279}}}
+    {'virat' : {'t': {'49373197': 24.38534791343279, '41780702': 24.38534791343279, '16017429': 24.38534791343279}}}
 
-```
+    ```
 
 7. **Get top 10 docs** : This function returns the top 10 doc-id's sorted based on the relevance scores.
 
