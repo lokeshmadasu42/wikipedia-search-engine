@@ -1,5 +1,7 @@
 # English Wikipedia Search Engine
 
+[![Video](Search_pipeline.png)](search_engine_streamlit.mkv)
+
 ## Overview
 
 This project presents an end-to-end information retrieval system developed using the English Wikipedia dump, a dataset of approximately 100GB in size encompassing nearly 22 million wiki pages. The system's core functionality supports two types of queries: Plain queries and Field queries. The primary goal is to provide the top 10 relevant Wikipedia article titles for a given query. The project unfolds in two key stages: Index Creation and Search Operation.
