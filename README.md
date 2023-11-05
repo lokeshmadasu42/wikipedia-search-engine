@@ -1,4 +1,4 @@
-# English Wikipedia Search Engine
+# Wikipedia Search Engine
 
 [![Video](virat_kohli_plain_query_results.png)](search_engine_streamlit.mkv)
 
