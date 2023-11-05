@@ -1,6 +1,6 @@
 # Wikipedia Search Engine
 
-[![Video](virat_kohli_plain_query_results.png)](search_engine_streamlit.mkv)
+[![Video](media/virat_kohli_plain_query_results.png)](media/search_engine_streamlit.mkv)
 
 ## Overview
 
@@ -52,7 +52,7 @@ tendulkar:d1-t1b1|d6-c1b1
 
 The system is expected to output relevant Wikipedia page titles in response to plain or field queries in less than 10 seconds. Below is the flowchart of the search operation, along with a detailed description of each module.
 
-![Search Operation](Search_pipeline.png)
+![Search Operation](media/Search_pipeline.png)
 
 ### Modules Description
 
@@ -76,7 +76,7 @@ The system is expected to output relevant Wikipedia page titles in response to p
 
 6. **Apply TF-IDF Ranking**: This function applies TF-IDF ranking and assigns a relevance score to each document. The intuition behind TF-IDF is that terms that appear often in a document should have high weights, and terms that appear in many documents should have low weights.
 
-    ![TF-IDF Formula](tf-idf-formula.png)
+    ![TF-IDF Formula](media/tf-idf-formula.png)
 
     ```
     weightage_dict = {'t': 1.0, 'b': 0.6, 'c': 0.4, 'i': 0.75, 'l': 0.20, 'r': 0.25}
